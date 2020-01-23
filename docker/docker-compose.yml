@@ -3,6 +3,7 @@ version: '3.5'
 services:
   zookeeper:
     image: zookeeper:3.4.9
+    container_name: zookeeper
     restart: unless-stopped
     hostname: zookeeper
     ports:
@@ -13,6 +14,7 @@ services:
 
   kafka:
     image: confluentinc/cp-enterprise-kafka:5.3.0
+    container_name: kafka
     restart: unless-stopped
     hostname: kafka
     ports:
@@ -31,3 +33,20 @@ services:
       KAFKA_CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: "zookeeper:2181"
     depends_on:
       - zookeeper
+
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  postgres:
+    container_name: pgdb
+    image: postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    ports:
+      - "5440:5432"
+    restart: unless-stopped
