@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     hostname: zookeeper
     ports:
-      - "2181:2181"
+      - '2181:2181'
     environment:
       ZOO_PORT: 2181
       ZOO_SERVERS: server.1=zookeeper:2888:3888
@@ -18,19 +18,19 @@ services:
     restart: unless-stopped
     hostname: kafka
     ports:
-      - "9092:9092"
-      - "19092:19092"
+      - '9092:9092'
+      - '19092:19092'
     environment:
       KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka:19092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
-      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       KAFKA_BROKER_ID: 1
-      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_LOG4J_LOGGERS: 'kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_METRIC_REPORTERS: "io.confluent.metrics.reporter.ConfluentMetricsReporter"
-      KAFKA_CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: "kafka:19092"
-      KAFKA_CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_METRIC_REPORTERS: 'io.confluent.metrics.reporter.ConfluentMetricsReporter'
+      KAFKA_CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: 'kafka:19092'
+      KAFKA_CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: 'zookeeper:2181'
     depends_on:
       - zookeeper
 
@@ -38,7 +38,7 @@ services:
     container_name: redis
     image: redis
     ports:
-      - "6379:6379"
+      - '6379:6379'
     restart: unless-stopped
 
   postgres:
@@ -48,5 +48,23 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
     ports:
-      - "5440:5432"
+      - '5440:5432'
+    restart: unless-stopped
+
+  mongo:
+    container_name: 'mongodb'
+    image: 'mongo'
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_DB_DATABASE}
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    hostname: mongodb-server
+    ports:
+      - '27017:27017'
+    restart: unless-stopped
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - '8081:8081'
     restart: unless-stopped
