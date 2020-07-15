@@ -6,20 +6,18 @@ DOCKER_FILE := $(DOCKER_DIR)/docker-compose.yml
 
 .PHONY: prepare-environment
 prepare-environment:
-	@rm -rf .env
-	@touch .env
 	@DB_USER=$(or $(DB_USER), $(shell read -p "Postgres User: " user; echo "DB_USER="$$user)); \
 	DB_PASS=$(or $(DB_PASS), $(shell read -p "Postgres Pass: " pass; echo "DB_PASS="$$pass)); \
 	MONGO_DB_DATABASE=$(or $(MONGO_DB_DATABASE), $(shell read -p "MongoDB Database: " mongo_database; echo "MONGO_DB_DATABASE="$$mongo_database)); \
-	printf "$$DB_USER\n$$DB_PASS\n$$MONGO_DB_DATABASE\n" >> .env
+	printf "$$DB_USER\n$$DB_PASS\n$$MONGO_DB_DATABASE\n" > docker/.env
 
 .PHONY: docker
 docker: prepare-environment
 	@echo "Creando las instancias de docker para PostgreSQL, MongoDB, Redis y Kafka"
 	@docker-compose -f $(DOCKER_FILE) --project-directory $(DOCKER_DIR) up -d
 
-.PHONY: docker-stop
-docker-stop:
+.PHONY: docker-down
+docker-down:
 	docker-compose -f $(DOCKER_FILE) down -v
 
 .PHONY: producer
@@ -79,8 +77,8 @@ drop-database:
 	docker-compose -f $(DOCKER_FILE) exec postgres psql -U $$DB_USER -W -c \
 		"DROP DATABASE "$$DB_NAME";"
 
-.PHONY: privilegies-database
-privilegies-database:
+.PHONY: privileges-database
+privileges-database:
 	@DB_NAME=$(or $(DB_NAME), $(shell read -p "Base de datos: " dbname; echo $$dbname)); \
 	DB_USER=$(or $(DB_USER), $(shell read -p "Usuario: " user; echo $$user)); \
 	docker-compose -f $(DOCKER_FILE) exec postgres psql -U $$DB_USER -W -c \
