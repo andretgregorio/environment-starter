@@ -1,42 +1,40 @@
-# Kafka Docker by CPGOPS
+# Environment starter with default images.
 
-El proposito de este proyecto de crear las configuraciones de docker necesarias para crear las instancias de Kafka para usarse en un entorno local.
+This project provides an easy to get up and running with some of the major images used on my development process.
 
-## Descripción de las variables del Makefile
-Se describen a continuación las variables del Makefile
-
+## Makefile variables
 ```
-DOCKER_DIR := Directorio donde se encuentran los docker-compose.yml
+DOCKER_DIR := Directory where the docker-compose.yaml can be found.
 ```
 
-## Configuración de Kafka
-La configuración por defecto funciona muy bien para un zookeeper y un broker suficiente para correr pruebas en local.
+## Kafka configuration
+Runs with zookeeper and one broker. Suits local development needs.
 
 ```Shell
 make docker
 ```
 
-## ¿Cómo correr un productor?
-Para correr un productor de kafka debes correr en la consola el siguiente comando y ingresar le topico
+## Executing a producer.
+To create a producer, just run the following command:
 
 ```Shell
 make producer
 ```
 
-## ¿Cómo correr un consumidor?
-Para correr un consumidor de kafka debes correr en la consola el siguiente comando y ingresar le topico
+## Executing a consumer
+To run a kafka consumer on command line, run the following command:
 
 ```Shell
 make consumer
 ```
 
-## Creacion de base de datos en mongo
-Al correr el comando
+## MongoDB
+When executing
 
 ```Shell
 make docker
 ```
-se solicitara una nombre para inicializar una base de datos en MongoDb. El usuario y contraseña se encuentran en el archivo init-mongo.js dentro de la carpeta docker. De esta manera para conectarse a la base de datos de forma local a traves del path de mongodb:
+you will be asked to provide a name to the a mongo database. User and password can be found in the init-mongo.js file, inside the docker directory.
 
 ```Shell
 mongodb://<username>:<password>@localhost:27017/<database_name>
